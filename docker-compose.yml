@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  apache:
+    container_name: preview-branches
+    image: nginx:alpine3.17
+    ports:
+      - 6767:80
+    volumes:
+      - ./public:/usr/share/nginx/html/
+
