@@ -73,23 +73,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Delete preview environments
-        uses: actions/github-script@v5
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { owner, repo } = context.repo;
-            const prNumber = context.payload.pull_request.number;
+          action: delete
+          branch: gh-pages
+          commit-message: Remove preview for PR 
 
-            console.log(github);
-            const { data: environments } = await github.rest.repos.listEnvironments({ owner, repo });
-
-            for (const env of environments) {
-              if (env.name.includes(`PR-${prNumber}-`)) {
-                await github.rest.repos.deleteEnvironment({
-                  owner,
-                  repo,
-                  environment_id: env.id
-                });
-              }
-            }
+      - name: Leave a comment after removal
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-preview
+          message: "\
+            [PR Preview Action]\
+            (${{ github.server_url }}/${{ env.actionrepo }})
+            ${{ env.action_version }}
+            :---:
+            Preview removed because the pull request was closed.
+            ${{ env.datetime }}
+            "
