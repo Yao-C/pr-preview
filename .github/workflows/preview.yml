@@ -1,0 +1,86 @@
+name: "Build and Deploy Pull Request Preview Environment"
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - name: Install dependencies
+        run: npm install
+      - name: Deploy Preview
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+  notify:
+    runs-on: ubuntu-latest
+    needs: [preview]
+    steps:
+      - name: Comment on pull request
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = context.payload.pull_request.number;
+            const deploymentUrl = context.payload.deployment_status.target_url;
+            const commentBody = `A preview environment has been created: ${deploymentUrl}`;
+
+            const { data: comments } = await github.issues.listComments({
+              owner,
+              repo,
+              issue_number: prNumber
+            });
+
+            const existingComment = comments.find(comment => comment.body.includes('A preview environment has been created:'));
+            if (existingComment) {
+              await github.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment.id,
+                body: commentBody
+              });
+            } else {
+              await github.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+            }
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  cleanup:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Delete preview environments
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = context.payload.pull_request.number;
+            const { data: environments } = await github.repos.listEnvironments({ owner, repo });
+
+            for (const env of environments) {
+              if (env.name.includes(`PR-${prNumber}-`)) {
+                await github.repos.deleteEnvironment({
+                  owner,
+                  repo,
+                  environment_id: env.id
+                });
+              }
+            }
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
