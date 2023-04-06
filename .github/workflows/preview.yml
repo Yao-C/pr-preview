@@ -39,8 +39,8 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const prNumber = context.payload.pull_request.number;
-            console.log(context.payload);
-            const deploymentUrl = context.payload.deployment_status.target_url;
+            
+            const deploymentUrl = 'https://yao-c.github.io/pr-preview/pr-preview/pr-2/public/';
             const commentBody = `A preview environment has been created: ${deploymentUrl}`;
 
             const { data: comments } = await github.issues.listComments({
