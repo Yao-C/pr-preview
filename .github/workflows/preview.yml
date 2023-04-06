@@ -29,6 +29,7 @@ jobs:
       - name: Comment on pull request
         uses: actions/github-script@v5
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const prNumber = context.payload.pull_request.number;
@@ -57,8 +58,6 @@ jobs:
                 body: commentBody
               });
             }
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   cleanup:
     if: github.event.action == 'closed'
     runs-on: ubuntu-latest
@@ -68,6 +67,7 @@ jobs:
       - name: Delete preview environments
         uses: actions/github-script@v5
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const prNumber = context.payload.pull_request.number;
@@ -82,5 +82,3 @@ jobs:
                 });
               }
             }
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
