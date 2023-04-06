@@ -22,7 +22,12 @@ jobs:
       - name: Deploy Preview
         uses: rossjrw/pr-preview-action@v1
         with:
-          source-dir: ./public
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: ./public
+          TARGET_FOLDER: .
+          CLEAN: true
+
   notify:
     runs-on: ubuntu-latest
     needs: [preview]
