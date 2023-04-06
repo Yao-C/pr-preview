@@ -74,13 +74,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Delete preview environments
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          action: delete
-          branch: gh-pages
-          commit-message: Remove preview for PR 
-
+      - name: Delete preview environments 
+        run: git push origin --delete gh-pages
+        #uses: JamesIves/github-pages-deploy-action@v4
+        #with:
+          #action: delete
+          #branch: gh-pages
+          #commit-message: Remove preview for PR 
+      
       - name: Leave a comment after removal
         uses: marocchino/sticky-pull-request-comment@v2
         with:
