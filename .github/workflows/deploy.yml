@@ -33,7 +33,7 @@ jobs:
         uses: actions/configure-pages@v3
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-pages-artifact@v1
         with: 
           name: public-artifact
           path: ./public
@@ -56,5 +56,4 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           artifact_name: public-artifact
