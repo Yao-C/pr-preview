@@ -1,36 +1,36 @@
-name: "Build and Deploy Pull Request Preview Environment"
+# name: "Build and Deploy Pull Request Preview Environment"
 
-on:
-  pull_request:
-    branches: [ main ]
-    types: [opened, synchronize, reopened, closed]
+# on:
+#   pull_request:
+#     branches: [ main ]
+#     types: [opened, synchronize, reopened, closed]
 
-env:
-  PREVIEW_BRANCH_PREFIX: pr-
+# env:
+#   PREVIEW_BRANCH_PREFIX: pr-
 
-jobs:
-  preview:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+# jobs:
+#   preview:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      # Deploy preview environment
-      - name: Deploy Preview
-        if: github.event_name == 'pull_request' && github.event.action != 'closed'
-        run: |
-          # Create a new preview branch for the pull request
-          git checkout -b "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
+#       # Deploy preview environment
+#       - name: Deploy Preview
+#         if: github.event_name == 'pull_request' && github.event.action != 'closed'
+#         run: |
+#           # Create a new preview branch for the pull request
+#           git checkout -b "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
           
-          # Define the commands to deploy to the preview branch here
-          git push origin "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
+#           # Define the commands to deploy to the preview branch here
+#           git push origin "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
       
-      # Delete preview environment when pull request is closed
-      - name: Delete Preview
-        if: github.event_name == 'pull_request' && github.event.action == 'closed'
-        run: |          
-          # Delete the preview branch for the pull request
-          git push origin --delete "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
+#       # Delete preview environment when pull request is closed
+#       - name: Delete Preview
+#         if: github.event_name == 'pull_request' && github.event.action == 'closed'
+#         run: |          
+#           # Delete the preview branch for the pull request
+#           git push origin --delete "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
   
   # notify:
   #   runs-on: ubuntu-latest
