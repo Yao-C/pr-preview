@@ -31,13 +31,9 @@ jobs:
       # Delete preview environment when pull request is closed
       - name: Delete Preview
         if: github.event_name == 'pull_request' && github.event.action == 'closed'
-        run: |
-          # Get the pull request number
-          PR_NUMBER=$(echo "${{ github.event.pull_request.number }}" | tr -cd '[:digit:]')
-          
+        run: |          
           # Delete the preview branch for the pull request
-          PREVIEW_BRANCH="${{ env.PREVIEW_BRANCH_PREFIX }}${{ PR_NUMBER }}"
-          git push origin --delete "${{ PREVIEW_BRANCH }}"
+          git push origin --delete "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
   
   # notify:
   #   runs-on: ubuntu-latest
