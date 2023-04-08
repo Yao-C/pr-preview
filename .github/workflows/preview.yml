@@ -19,9 +19,6 @@ jobs:
       - name: Deploy Preview
         if: github.event_name == 'pull_request' && github.event.action != 'closed'
         run: |
-          # Get the pull request number
-          console.log(github);
-
           # Create a new preview branch for the pull request
           git checkout -b "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
           
