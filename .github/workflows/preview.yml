@@ -20,6 +20,7 @@ jobs:
         if: github.event_name == 'pull_request' && github.event.action != 'closed'
         run: |
           # Get the pull request number
+          console.log(github);
           PR_NUMBER=$(echo "${{ github.event.pull_request.number }}" | tr -cd '[:digit:]')
           
           # Create a new preview branch for the pull request
