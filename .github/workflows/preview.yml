@@ -21,14 +21,12 @@ jobs:
         run: |
           # Get the pull request number
           console.log(github);
-          PR_NUMBER=$(echo "${{ github.event.pull_request.number }}" | tr -cd '[:digit:]')
-          
+
           # Create a new preview branch for the pull request
-          PREVIEW_BRANCH="${{ env.PREVIEW_BRANCH_PREFIX }}${{ PR_NUMBER }}"
-          git checkout -b "${{ PREVIEW_BRANCH }}"
+          git checkout -b "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
           
           # Define the commands to deploy to the preview branch here
-          git push origin "${{ PREVIEW_BRANCH }}"
+          git push origin "${{ env.PREVIEW_BRANCH_PREFIX }}${{ github.event.pull_request.number }}"
       
       # Delete preview environment when pull request is closed
       - name: Delete Preview
